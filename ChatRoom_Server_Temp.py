@@ -8,13 +8,15 @@ port = 80                # Reserve a port for your service.
 import requests
 import time
 
-def get_external_temperature(city):
+global weather_location
+weather_location = input("Which city for weather data? ")
+
+def get_external_temperature():
     api_key = "4b608b026eabe79968f2bfe9e0c8b34f"
-    weather_location = "Mannheim"
     base_url = f"http://api.openweathermap.org/data/2.5/weather?q={weather_location}&appid={api_key}&units=metric"
     response = requests.get(base_url)
     data = response.json()
-    print(data)
+    #print(data)
     return data['main']['temp']
 
 print('Server started!')
@@ -25,11 +27,11 @@ s.listen(5)                 # Now wait for client connection.
 c, addr = s.accept()     # Establish connection with client.
 print('Got connection from', addr)
 while True:
-  temperature = get_external_temperature("Amsterdam")
+  temperature = get_external_temperature()
   msg = c.recv(1024)
   print(addr, ' >> ', msg)
   time.sleep(5)
-  msg = str(temperature)
+  msg = str(f"Temperature is: {temperature} in {weather_location}")
   msg = msg.encode()
   c.send(msg);
   #c.close()
